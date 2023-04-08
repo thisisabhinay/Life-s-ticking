@@ -1,0 +1,62 @@
+---
+import { Coordinate } from "@components/index"
+
+const ROWS = 100
+
+const msPerHour = 1000 * 60 * 60 // number of milliseconds in an hour
+const now = new Date() // get the current date and time
+const startOfYear = new Date(now.getFullYear(), 0, 1) // get the start of the current year
+const endOfYear = new Date(now.getFullYear() + 1, 0, 1) // get the start of next year
+const totalHours = Math.floor((endOfYear.getTime() - startOfYear.getTime()) / msPerHour) // calculate the total number of hours in the year
+const hoursElapsed = Math.floor((now.getTime() - startOfYear.getTime()) / msPerHour) // calculate the elapsed time in hours
+const percentageElapsed = (hoursElapsed / totalHours) * 100 // calculate the percentage elapsed
+
+const rows = 'x'.repeat(ROWS).split('')
+const cols = 'y'.repeat(Math.ceil(totalHours / ROWS)).split('')
+
+const getClassName = (hour: number) => (hour <= hoursElapsed ? (hour === hoursElapsed ? 'bg-yellow-500' : 'bg-gray-200' ): 'bg-teal-500')
+const getCurrentStatus = (hour: number) =>  (hour === hoursElapsed)
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Life' Ticking</title>
+  </head>
+  <body class="grid grid-cols-1 gap-10 auto-rows-max justify-items-center">
+    <header class="grid grid-cols-2 auto-rows-max gap-5 w-[896px] pt-10">
+      <h1 class="text-4xl font-bold">Life's Ticking</h1>
+      <div class="grid grid-cols-1 auto-rows-max gap-1">
+        <div class="text-sm text-gray-500 grid grid-cols-[1fr_4rem] auto-rows-max gap-2 text-right">
+          <div>Total hours in the current year:</div> 
+          <div class="font-bold text-gray-900">{totalHours}</div>
+        </div>
+        <div class="text-sm text-gray-500 grid grid-cols-[1fr_4rem] auto-rows-max gap-2 text-right">
+          <div>Hours elapsed since the start of the year:</div> 
+          <div class="font-bold text-gray-900">{hoursElapsed}</div>
+        </div>
+        <div class="text-sm text-gray-500 grid grid-cols-[1fr_4rem] auto-rows-max gap-2 text-right">
+          <div>Percentage of the year elapsed:</div> 
+          <div class="font-bold text-gray-900">{percentageElapsed.toFixed(2)}<span class="text-xs">%</span></div>
+        </div>
+      </div>
+    </header>
+    <main class="grid grid-cols-1 gap-0 auto-rows-max w-[896px] justify-self-center">
+      <section class="grid auto-rows-max grid-cols-[repeat(100,5px)] gap-1 py-5">
+        {
+          rows.map((x, row) => (
+            <>
+              {cols.map((y, col) => {
+                const hour = (row + 1) * ROWS + col
+                return <div id="cell" class={`"grid rounded-full ${getClassName(hour)} h-[5px] p-2"`} data-current={getCurrentStatus(hour).toString()}></div>
+              })}
+            </>
+          ))
+        }
+      </section>
+    </main>
+  </body>
+</html>

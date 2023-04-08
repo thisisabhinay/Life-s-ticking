@@ -1,0 +1,38 @@
+---
+interface Props {
+  axis: 'x' | 'y'
+  x: number
+  y: number
+  value: number
+}
+const { axis, value } = Astro.props
+const rotate = axis === 'x'
+---
+
+<style lang="sass" scoped>
+  .line
+    width: 1px
+    height: 32px
+</style>
+
+<div id="coordinate" data-axis={axis} class={`flex ${rotate ? 'flex-col' : ''} gap-1 fixed items-center`}>
+  <div class="text-5xl font-bold">
+    {value}
+  </div>
+  <div class={`"line h-8 bg-gray-300" ${rotate ? '' : ''}`} style="width: 1px; background: #000">&nbsp;</div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const thisEl = document.getElementById('coordinate')
+    const first = document.querySelector("#cell:first-child") as HTMLDivElement
+    const current = document.querySelector("[data-current='true']") as HTMLDivElement
+    const top = first?.offsetTop
+    const left = current?.offsetLeft
+  
+    console.log(top, left)
+    if(!thisEl) return
+    thisEl.style.top = `${top - 100}px`
+    thisEl.style.left = `${left - 12}px`
+  })
+</script>
